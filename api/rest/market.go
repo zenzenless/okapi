@@ -4,141 +4,205 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"strconv"
-	"sync"
-	"time"
-
-	logging "github.com/ipfs/go-log/v2"
-	"github.com/james-zhang-bing/okapi/api"
-	"github.com/sdcoffey/techan"
+	"github.com/james-zhang-bing/okapi"
+	requests "github.com/james-zhang-bing/okapi/requests/rest/market"
+	responses "github.com/james-zhang-bing/okapi/responses/market"
 )
 
-var log = logging.Logger("req")
-
-func init() {
-	logging.SetLogLevel("req", "INFO")
+// Market
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data
+type Market struct {
+	client *ClientRest
 }
 
-//get okex kline
-// /api/v5/market/candles
-func (c *Client) GetKlineOKX(instId, after, before, bar, limit string) (*api.KlineResOKX, error) {
-	req, err := http.NewRequest("GET", c.BaseURL+OkxAPI.marketHistoryCandles, nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	q := req.URL.Query()
-	q.Add("instId", instId)
-	q.Add("after", after)
-	q.Add("before", before)
-	q.Add("bar", bar)
-	q.Add("limit", limit)
-
-	req.URL.RawQuery = q.Encode()
-	log.Debug(req.URL.String())
-	body, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	kline := &api.KlineResOKX{}
-	err = json.Unmarshal(body, kline)
-	if err != nil {
-		return nil, err
-	}
-	return kline, nil
+// NewMarket returns a pointer to a fresh Market
+func NewMarket(c *ClientRest) *Market {
+	return &Market{c}
 }
 
-// api/v5/market/tickers
-func (c *Client) GetTickers() (*api.Tickers, error) {
-	req, err := http.NewRequest("GET", c.BaseURL+"api/v5/market/tickers?instType=SPOT", nil)
+// GetTickers
+// Retrieve the latest price snapshot, best bid/ask price, and trading volume in the last 24 hours.
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data-get-tickers
+func (c *Market) GetTickers(req requests.GetTickers) (response responses.Ticker, err error) {
+	p := "/api/v5/market/tickers"
+	m := okapi.S2M(req)
+	res, err := c.client.Do(http.MethodGet, p, false, m)
 	if err != nil {
-		return nil, err
+		return
 	}
-	body, err := c.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	tickers := &api.Tickers{}
-	err = json.Unmarshal(body, tickers)
-	if err != nil {
-		return nil, err
-	}
-	return tickers, nil
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
 }
 
-// use GetKlineOKX and mashal to techan.TimeSeries
-func (c *Client) GetKlineSeries(instId string, endTs, startTs int64, bar, limit string) (*techan.TimeSeries, error) {
-
-	log.Infof("get kline series for %s from %s -> %s", instId, time.UnixMilli(startTs), time.UnixMilli(endTs))
-	startTime := strconv.FormatInt(startTs-10, 10)
-	endTime := strconv.FormatInt(endTs-10, 10)
-	if endTs == 0 || time.Now().UnixMilli()-endTs < 0 {
-		endTime = strconv.FormatInt(time.Now().UnixMilli(), 10)
-	}
-	if startTs == 0 {
-		startTime = ""
-	}
-
-	kl, err := c.GetKlineOKX(instId, endTime, startTime, bar, limit)
+// GetTicker
+// Retrieve the latest price snapshot, best bid/ask price, and trading volume in the last 24 hours.
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data-get-ticker
+func (c *Market) GetTicker(req requests.GetTickers) (response responses.Ticker, err error) {
+	p := "/api/v5/market/ticker"
+	m := okapi.S2M(req)
+	res, err := c.client.Do(http.MethodGet, p, false, m)
 	if err != nil {
-		return nil, err
+		return
 	}
-	return kl.ToTimeSeries(bar)
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
 }
 
-func (c *Client) ConcurrentFetch(instId string, end, start time.Time, barString string) (*techan.TimeSeries, error) {
-	gNum := make(chan struct{}, 10)
-	done := make(chan struct{})
-	receive := make(chan *techan.TimeSeries, 10)
-	bar := api.BarMap[barString]
-	if end.After(time.Now()) {
-		end = time.Now().Add(100 * bar)
+// GetIndexTickers
+// Retrieve index tickers.
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data-get-index-tickers
+func (c *Market) GetIndexTickers(req requests.GetIndexTickers) (response responses.Ticker, err error) {
+	p := "/api/v5/market/ticker"
+	m := okapi.S2M(req)
+	res, err := c.client.Do(http.MethodGet, p, false, m)
+	if err != nil {
+		return
 	}
-	frequency := 5
-	go func() {
-		var wg sync.WaitGroup
-		t := time.Now()
-		times := 0
-		for from := start; end.After(from); from = from.Add(100 * bar) {
-			times++
-			if times > frequency {
-				d := time.Second - time.Now().Sub(t)
-				if d > 0 {
-					time.Sleep(d)
-				}
-				times = 0
-				t = time.Now()
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}
 
-			}
-			wg.Add(1)
-			gNum <- struct{}{}
-			go func(f time.Time) {
-				defer func() {
-					<-gNum
-					wg.Done()
-				}()
-				s, e := f.UnixMilli(), f.Add(100*bar).UnixMilli()
-				timeSeries, err := c.GetKlineSeries(instId, e, s, barString, "100")
-				if err != nil {
-					log.Error(err)
-					panic(err)
-				}
-				receive <- timeSeries
-
-			}(from)
-
-		}
-		wg.Wait()
-		close(done)
-	}()
-	series := techan.NewTimeSeries()
-	for {
-		select {
-		case timeSeries := <-receive:
-			series.Candles = append(series.Candles, timeSeries.Candles...)
-		case <-done:
-			return series, nil
-		}
+// GetOrderBook
+// Retrieve a instrument is order book.
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data-get-order-book
+func (c *Market) GetOrderBook(req requests.GetOrderBook) (response responses.OrderBook, err error) {
+	p := "/api/v5/market/books"
+	m := okapi.S2M(req)
+	res, err := c.client.Do(http.MethodGet, p, false, m)
+	if err != nil {
+		return
 	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}
 
+// GetCandlesticks
+// Retrieve the candlestick charts. This endpoint can retrieve the latest 1,440 data entries. Charts are returned in groups based on the requested bar.
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data-get-candlesticks
+func (c *Market) GetCandlesticks(req requests.GetCandlesticks) (response responses.Candle, err error) {
+	p := "/api/v5/market/candles"
+	m := okapi.S2M(req)
+	res, err := c.client.Do(http.MethodGet, p, false, m)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}
+
+// GetCandlesticksHistory
+// Retrieve history candlestick charts from recent years.
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data-get-candlesticks
+func (c *Market) GetCandlesticksHistory(req requests.GetCandlesticks) (response responses.Candle, err error) {
+	p := "/api/v5/market/history-candles"
+	m := okapi.S2M(req)
+	res, err := c.client.Do(http.MethodGet, p, false, m)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}
+
+// GetIndexCandlesticks
+// Retrieve the candlestick charts of the index. This endpoint can retrieve the latest 1,440 data entries. Charts are returned in groups based on the requested bar.
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data-get-index-candlesticks
+func (c *Market) GetIndexCandlesticks(req requests.GetCandlesticks) (response responses.IndexCandle, err error) {
+	p := "/api/v5/market/index-candles"
+	m := okapi.S2M(req)
+	res, err := c.client.Do(http.MethodGet, p, false, m)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}
+
+// GetMarkPriceCandlesticks
+// Retrieve the candlestick charts of mark price. This endpoint can retrieve the latest 1,440 data entries. Charts are returned in groups based on the requested bar.
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data-get-mark-price-candlesticks
+func (c *Market) GetMarkPriceCandlesticks(req requests.GetCandlesticks) (response responses.CandleMarket, err error) {
+	p := "/api/v5/market/mark-price-candles"
+	m := okapi.S2M(req)
+	res, err := c.client.Do(http.MethodGet, p, false, m)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}
+
+// GetTrades
+// Retrieve the recent transactions of an instrument.
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data-get-trades
+func (c *Market) GetTrades(req requests.GetTrades) (response responses.Trade, err error) {
+	p := "/api/v5/market/trades"
+	m := okapi.S2M(req)
+	res, err := c.client.Do(http.MethodGet, p, false, m)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}
+
+// Get24HTotalVolume
+// The 24-hour trading volume is calculated on a rolling basis, using USD as the pricing unit.
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data-get-24h-total-volume
+func (c *Market) Get24HTotalVolume() (response responses.TotalVolume24H, err error) {
+	p := "/api/v5/market/platform-24-volume"
+	res, err := c.client.Do(http.MethodGet, p, false)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
+}
+
+// GetIndexComponents
+// Get the index component information data on the market
+//
+// https://www.okex.com/docs-v5/en/#rest-api-market-data-get-index-components
+func (c *Market) GetIndexComponents(req requests.GetIndexComponents) (response responses.IndexComponent, err error) {
+	p := "/api/v5/market/index-components"
+	m := okapi.S2M(req)
+	res, err := c.client.Do(http.MethodGet, p, false, m)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	d := json.NewDecoder(res.Body)
+	err = d.Decode(&response)
+	return
 }

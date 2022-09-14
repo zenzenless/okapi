@@ -28,7 +28,7 @@ func TestRequestOrder(t *testing.T) {
 	assert.NoError(t, err)
 	fmt.Println(a1, a2)
 	assert.NoError(t, err)
-	_, err = c.Do(req)
+	_, err = c.v0Do(req)
 	assert.NoError(t, err)
 }
 
