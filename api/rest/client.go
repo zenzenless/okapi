@@ -21,26 +21,26 @@ import (
 )
 
 type APIKey struct {
-	APIKey     string
-	SecretKey  string
-	Passphrase string
+	apiKey     string
+	secretKey  []byte
+	passphrase string
 }
 
 // Add request headers
 func (c *ClientRest) AddSignature(req *http.Request, body string) {
-	req.Header.Add("OK-ACCESS-KEY", c.APIKey.APIKey)
+	req.Header.Add("OK-ACCESS-KEY", c.APIKey.apiKey)
 	req.Header.Add("OK-ACCESS-TIMESTAMP", time.Now().UTC().Format("2006-01-02T15:04:05.000Z"))
-	req.Header.Add("OK-ACCESS-PASSPHRASE", c.APIKey.Passphrase)
+	req.Header.Add("OK-ACCESS-PASSPHRASE", c.APIKey.passphrase)
 	req.Header.Add("OK-ACCESS-SIGN", c.v0sign(req, body))
 
 }
 
 //v0sign calculates the signature for a request
 func (c *ClientRest) v0sign(req *http.Request, body string) string {
-	path := strings.Replace(req.URL.Path, c.BaseURL, "", -1)
+	path := strings.Replace(req.URL.Path, string(c.baseURL), "", -1)
 
 	prehash := req.Header.Get("OK-ACCESS-TIMESTAMP") + req.Method + fmt.Sprintf("%s?%s", path, req.URL.RawQuery) + body
-	h := hmac.New(sha256.New, []byte(c.APIKey.SecretKey))
+	h := hmac.New(sha256.New, []byte(c.APIKey.secretKey))
 	h.Write([]byte(prehash))
 	return base64.StdEncoding.EncodeToString(h.Sum(nil))
 }
@@ -56,9 +56,9 @@ func fromEnv() []string {
 // NewAPIKey creates a new API key
 func NewAPIKey(apiKey string, secretKey string, passphrase string) *APIKey {
 	return &APIKey{
-		APIKey:     apiKey,
-		SecretKey:  secretKey,
-		Passphrase: passphrase,
+		apiKey:     apiKey,
+		secretKey:  []byte(secretKey),
+		passphrase: passphrase,
 	}
 }
 
@@ -70,22 +70,29 @@ type ClientRest struct {
 	Market      *Market
 	PublicData  *PublicData
 	TradeData   *TradeData
-	APIKey      *APIKey
-	BaseURL     string
-	apiKey      string
-	secretKey   []byte
-	passphrase  string
+	 *APIKey
+	//baseURL     string
 	destination okapi.Destination
 	baseURL     okapi.BaseURL
 	client      *http.Client
 }
 
 // NewClient creates a new client
-func NewClient(apiKey *APIKey) *ClientRest {
-	return &ClientRest{
+func NewClient(apiKey *APIKey,baseURL okapi.BaseURL, destination okapi.Destination) *ClientRest {
+	c:= &ClientRest{
 		APIKey:  apiKey,
-		BaseURL: "https://aws.okx.com/",
+		baseURL:     baseURL,
+		destination: destination,
+		client:      http.DefaultClient,
 	}
+	c.Account = NewAccount(c)
+	c.SubAccount = NewSubAccount(c)
+	c.Trade = NewTrade(c)
+	c.Funding = NewFunding(c)
+	c.Market = NewMarket(c)
+	c.PublicData = NewPublicData(c)
+	c.TradeData = NewTradeData(c)
+	return c
 }
 
 // client do a request

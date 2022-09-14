@@ -23,7 +23,7 @@ func init() {
 //get okex kline
 // /api/v5/market/candles
 func (c *ClientRest) GetKlineOKX(instId, after, before, bar, limit string) (*api.KlineResOKX, error) {
-	req, err := http.NewRequest("GET", c.BaseURL+okapi.OkxApiURL.MarketHistoryCandles, nil)
+	req, err := http.NewRequest("GET", string(c.baseURL)+okapi.OkxApiURL.MarketHistoryCandles, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *ClientRest) GetKlineOKX(instId, after, before, bar, limit string) (*api
 
 // api/v5/market/tickers
 func (c *ClientRest) GetTickers() (*api.Tickers, error) {
-	req, err := http.NewRequest("GET", c.BaseURL+"api/v5/market/tickers?instType=SPOT", nil)
+	req, err := http.NewRequest("GET", string(c.baseURL)+"/api/v5/market/tickers?instType=SPOT", nil)
 	if err != nil {
 		return nil, err
 	}

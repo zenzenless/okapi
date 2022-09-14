@@ -25,7 +25,7 @@ var InstType = struct {
 }
 
 func (c *ClientRest) GetOrdersOKX(instType string) ([]api.OkxOrder, error) {
-	req, err := http.NewRequest("GET", c.BaseURL+okapi.OkxApiURL.OrdersHistoryArchive, nil)
+	req, err := http.NewRequest("GET", string(c.baseURL)+okapi.OkxApiURL.OrdersHistoryArchive, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (c *ClientRest) GetOrdersOKX(instType string) ([]api.OkxOrder, error) {
 }
 
 func (c *ClientRest) GetFillsOKX(instType string) ([]api.Fill, error) {
-	req, err := http.NewRequest("GET", c.BaseURL+okapi.OkxApiURL.FillsHistory, nil)
+	req, err := http.NewRequest("GET", string(c.baseURL)+okapi.OkxApiURL.FillsHistory, nil)
 	if err != nil {
 		return nil, err
 	}

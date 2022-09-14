@@ -7,12 +7,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/james-zhang-bing/okapi"
 	"github.com/james-zhang-bing/okapi/api"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetTickers(t *testing.T) {
-	c := NewClient(&APIKey{})
+	c := NewClient(&APIKey{},okapi.RestURL,okapi.AwsServer)
 	tickers, err := c.GetTickers()
 	assert.NoError(t, err)
 	assert.NotNil(t, tickers)
@@ -20,7 +21,7 @@ func TestGetTickers(t *testing.T) {
 }
 
 func TestGetKlineOKX(t *testing.T) {
-	c := NewClient(&APIKey{})
+	c := NewClient(&APIKey{},okapi.RestURL,okapi.AwsServer)
 	startDate := time.Unix(1618150773, 0)
 	start := startDate.UnixMilli()
 	startStr := strconv.FormatInt(start, 10)
@@ -35,11 +36,11 @@ func TestGetKlineOKX(t *testing.T) {
 }
 
 func TestClient_GetKlineSeries(t *testing.T) {
-	c := NewClient(&APIKey{})
+	c := NewClient(&APIKey{}, okapi.RestURL, okapi.AwsServer)
 	startDate := time.Unix(1618150773, 0)
 	start := startDate.UnixMilli()
-	endDate:=startDate.Add(24*time.Hour)
-	end:=endDate.UnixMilli()
+	endDate := startDate.Add(24 * time.Hour)
+	end := endDate.UnixMilli()
 	got, err := c.GetKlineSeries("BTC-USDT", end, start, api.BAR_15m, "100")
 	assert.NoError(t, err)
 	fmt.Println(got.Candles[0].Period)
