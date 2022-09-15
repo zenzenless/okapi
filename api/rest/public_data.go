@@ -35,10 +35,7 @@ func (c *PublicData) GetInstruments(req requests.GetInstruments) (response respo
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -55,10 +52,7 @@ func (c *PublicData) GetDeliveryExerciseHistory(req requests.GetDeliveryExercise
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -75,10 +69,7 @@ func (c *PublicData) GetOpenInterest(req requests.GetOpenInterest) (response res
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -95,10 +86,7 @@ func (c *PublicData) GetLimitPrice(req requests.GetLimitPrice) (response respons
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -115,10 +103,7 @@ func (c *PublicData) GetOptionMarketData(req requests.GetOptionMarketData) (resp
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -135,10 +120,7 @@ func (c *PublicData) GetEstimatedDeliveryExercisePrice(req requests.GetEstimated
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -155,10 +137,7 @@ func (c *PublicData) GetDiscountRateAndInterestFreeQuota(req requests.GetDiscoun
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -174,10 +153,7 @@ func (c *PublicData) GetSystemTime() (response responses.GetSystemTime, err erro
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -194,10 +170,7 @@ func (c *PublicData) GetLiquidationOrders(req requests.GetLiquidationOrders) (re
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -216,10 +189,7 @@ func (c *PublicData) GetMarkPrice(req requests.GetMarkPrice) (response responses
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -236,10 +206,7 @@ func (c *PublicData) GetPositionTiers(req requests.GetPositionTiers) (response r
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -255,10 +222,7 @@ func (c *PublicData) GetInterestRateAndLoanQuota() (response responses.GetIntere
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -274,9 +238,6 @@ func (c *PublicData) GetUnderlying(req requests.GetUnderlying) (response respons
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }

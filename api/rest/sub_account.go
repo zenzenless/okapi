@@ -35,10 +35,7 @@ func (c *SubAccount) ViewList(req requests.ViewList) (response responses.ViewLis
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -58,10 +55,7 @@ func (c *SubAccount) CreateAPIKey(req requests.CreateAPIKey) (response responses
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -78,10 +72,7 @@ func (c *SubAccount) QueryAPIKey(req requests.QueryAPIKey) (response responses.A
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -101,10 +92,7 @@ func (c *SubAccount) ResetAPIKey(req requests.CreateAPIKey) (response responses.
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -121,10 +109,7 @@ func (c *SubAccount) DeleteAPIKey(req requests.DeleteAPIKey) (response responses
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -142,10 +127,7 @@ func (c *SubAccount) GetBalance(req requests.GetBalance) (response responses.Get
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -162,10 +144,7 @@ func (c *SubAccount) HistoryTransfer(req requests.HistoryTransfer) (response res
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -182,9 +161,6 @@ func (c *SubAccount) ManageTransfers(req requests.ManageTransfers) (response res
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }

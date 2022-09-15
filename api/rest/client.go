@@ -191,10 +191,7 @@ func (c *ClientRest) Status(req requests.Status) (response responses.Status, err
 	}
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
-	err = d.Decode(&response)
-	if err == nil {
-		err = response.ErrStatus()
-	}
+	err = Decode(d, &response)
 	return
 }
 
@@ -207,4 +204,16 @@ func (c *ClientRest) sign(method, path, body string) (string, string) {
 	h := hmac.New(sha256.New, c.secretKey)
 	h.Write(p)
 	return ts, base64.StdEncoding.EncodeToString(h.Sum(nil))
+}
+
+type Res interface {
+	ErrStatus() error
+}
+
+func Decode(d *json.Decoder, v Res) error {
+	err := d.Decode(v)
+	if err == nil {
+		err = v.ErrStatus()
+	}
+	return err
 }

@@ -41,7 +41,7 @@ func TestClient_GetKlineSeries(t *testing.T) {
 	start := startDate.UnixMilli()
 	endDate := startDate.Add(24 * time.Hour)
 	end := endDate.UnixMilli()
-	got, err := c.GetKlineSeries("", end, start, api.BAR_15m, 100)
+	got, err := c.GetKlineSeries("BTC-USDT", end, start, api.BAR_15m, 100)
 	assert.NoError(t, err)
 	fmt.Println(len(got.Candles))
 
