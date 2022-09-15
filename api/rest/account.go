@@ -40,6 +40,9 @@ func (c *Account) GetBalance(req requests.GetBalance) (response responses.GetBal
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -64,6 +67,9 @@ func (c *Account) GetPositions(req requests.GetPositions) (response responses.Ge
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -82,6 +88,9 @@ func (c *Account) GetAccountAndPositionRisk(req requests.GetAccountAndPositionRi
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -107,6 +116,9 @@ func (c *Account) GetBills(req requests.GetBills, arc bool) (response responses.
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -124,6 +136,9 @@ func (c *Account) GetConfig() (response responses.GetConfig, err error) {
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -142,6 +157,9 @@ func (c *Account) SetPositionMode(req requests.SetPositionMode) (response respon
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -167,6 +185,9 @@ func (c *Account) SetLeverage(req requests.SetLeverage) (response responses.Leve
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -187,6 +208,9 @@ func (c *Account) GetMaxBuySellAmount(req requests.GetMaxBuySellAmount) (respons
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -204,6 +228,9 @@ func (c *Account) GetMaxAvailableTradeAmount(req requests.GetMaxAvailableTradeAm
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -222,6 +249,9 @@ func (c *Account) IncreaseDecreaseMargin(req requests.IncreaseDecreaseMargin) (r
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -242,6 +272,9 @@ func (c *Account) GetLeverage(req requests.GetLeverage) (response responses.Leve
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -259,6 +292,9 @@ func (c *Account) GetMaxLoan(req requests.GetMaxLoan) (response responses.GetMax
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -276,6 +312,9 @@ func (c *Account) GetFeeRates(req requests.GetFeeRates) (response responses.GetF
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -293,6 +332,9 @@ func (c *Account) GetInterestAccrued(req requests.GetInterestAccrued) (response 
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -314,6 +356,9 @@ func (c *Account) GetInterestRates(req requests.GetBalance) (response responses.
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -332,6 +377,9 @@ func (c *Account) SetGreeks(req requests.SetGreeks) (response responses.SetGreek
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -352,6 +400,9 @@ func (c *Account) GetMaxWithdrawals(req requests.GetBalance) (response responses
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }

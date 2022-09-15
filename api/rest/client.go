@@ -63,14 +63,14 @@ func NewAPIKey(apiKey string, secretKey string, passphrase string) *APIKey {
 }
 
 type ClientRest struct {
-	Account     *Account
-	SubAccount  *SubAccount
-	Trade       *Trade
-	Funding     *Funding
-	Market      *Market
-	PublicData  *PublicData
-	TradeData   *TradeData
-	 *APIKey
+	Account    *Account
+	SubAccount *SubAccount
+	Trade      *Trade
+	Funding    *Funding
+	Market     *Market
+	PublicData *PublicData
+	TradeData  *TradeData
+	*APIKey
 	//baseURL     string
 	destination okapi.Destination
 	baseURL     okapi.BaseURL
@@ -78,9 +78,9 @@ type ClientRest struct {
 }
 
 // NewClient creates a new client
-func NewClient(apiKey *APIKey,baseURL okapi.BaseURL, destination okapi.Destination) *ClientRest {
-	c:= &ClientRest{
-		APIKey:  apiKey,
+func NewClient(apiKey *APIKey, baseURL okapi.BaseURL, destination okapi.Destination) *ClientRest {
+	c := &ClientRest{
+		APIKey:      apiKey,
 		baseURL:     baseURL,
 		destination: destination,
 		client:      http.DefaultClient,
@@ -192,6 +192,9 @@ func (c *ClientRest) Status(req requests.Status) (response responses.Status, err
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 	return
 }
 

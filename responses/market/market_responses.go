@@ -19,7 +19,7 @@ type (
 		OrderBooks []*market.OrderBook `json:"data,omitempty"`
 	}
 	Candle struct {
-		responses.Basic
+		responses.Basic 
 		Candles []*market.Candle `json:"data,omitempty"`
 	}
 	IndexCandle struct {

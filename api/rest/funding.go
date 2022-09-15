@@ -37,6 +37,9 @@ func (c *Funding) GetCurrencies() (response responses.GetCurrencies, err error) 
 
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 
 	return
 }
@@ -58,6 +61,9 @@ func (c *Funding) GetBalance(req requests.GetBalance) (response responses.GetBal
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 	return
 }
 
@@ -75,6 +81,9 @@ func (c *Funding) FundsTransfer(req requests.FundsTransfer) (response responses.
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 	return
 }
 
@@ -92,6 +101,9 @@ func (c *Funding) AssetBillsDetails(req requests.AssetBillsDetails) (response re
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 	return
 }
 
@@ -109,6 +121,9 @@ func (c *Funding) GetDepositAddress(req requests.GetDepositAddress) (response re
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 	return
 }
 
@@ -126,6 +141,9 @@ func (c *Funding) GetDepositHistory(req requests.GetDepositHistory) (response re
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 	return
 }
 
@@ -143,6 +161,9 @@ func (c *Funding) Withdrawal(req requests.Withdrawal) (response responses.Withdr
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 	return
 }
 
@@ -160,6 +181,9 @@ func (c *Funding) GetWithdrawalHistory(req requests.GetWithdrawalHistory) (respo
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 	return
 }
 
@@ -176,6 +200,9 @@ func (c *Funding) PiggyBankPurchaseRedemption(req requests.PiggyBankPurchaseRede
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 	return
 }
 
@@ -192,5 +219,8 @@ func (c *Funding) GetPiggyBankBalance(req requests.GetPiggyBankBalance) (respons
 	defer res.Body.Close()
 	d := json.NewDecoder(res.Body)
 	err = d.Decode(&response)
+	if err == nil {
+		err = response.ErrStatus()
+	}
 	return
 }

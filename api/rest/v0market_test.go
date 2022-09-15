@@ -13,7 +13,7 @@ import (
 )
 
 func TestGetTickers(t *testing.T) {
-	c := NewClient(&APIKey{},okapi.RestURL,okapi.AwsServer)
+	c := NewClient(&APIKey{}, okapi.RestURL, okapi.AwsServer)
 	tickers, err := c.GetTickers()
 	assert.NoError(t, err)
 	assert.NotNil(t, tickers)
@@ -21,7 +21,7 @@ func TestGetTickers(t *testing.T) {
 }
 
 func TestGetKlineOKX(t *testing.T) {
-	c := NewClient(&APIKey{},okapi.RestURL,okapi.AwsServer)
+	c := NewClient(&APIKey{}, okapi.RestURL, okapi.AwsServer)
 	startDate := time.Unix(1618150773, 0)
 	start := startDate.UnixMilli()
 	startStr := strconv.FormatInt(start, 10)
@@ -41,9 +41,9 @@ func TestClient_GetKlineSeries(t *testing.T) {
 	start := startDate.UnixMilli()
 	endDate := startDate.Add(24 * time.Hour)
 	end := endDate.UnixMilli()
-	got, err := c.GetKlineSeries("BTC-USDT", end, start, api.BAR_15m, "100")
+	got, err := c.GetKlineSeries("", end, start, api.BAR_15m, 100)
 	assert.NoError(t, err)
-	fmt.Println(got.Candles[0].Period)
+	fmt.Println(len(got.Candles))
 
 }
 
