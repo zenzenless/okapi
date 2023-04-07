@@ -41,6 +41,9 @@ func main() {
 	//for websocket private channel
 
 	priws, err := pr.NewPrivateClient(okapi.AwsPrivateWsURL, apikey)
+	if err != nil {
+		panic(err)
+	}
 	balanceCh, err := priws.SubscribeAccountChannel(&private.Account{})
 	if err != nil {
 		panic(err)
